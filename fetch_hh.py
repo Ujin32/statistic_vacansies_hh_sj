@@ -48,9 +48,12 @@ def fetch_all_vacancies_hh(programm_languages):
                 "page": page,
                 "per_page": 100,
                 }
-            hh_response = requests.get(url, params=params)
-            hh_response.raise_for_status
-            vacancies_info = hh_response.json()
+            try:
+                hh_response = requests.get(url, params=params)
+                hh_response.raise_for_status
+                vacancies_info = hh_response.json()
+            except requests.exceptions.RequestException as error:
+                print("Произошла ошибка при выполнении запроса:", error)
             if page == vacancies_info['pages']:
                 break
             vacancies_page = vacancies_info["items"]
@@ -63,7 +66,7 @@ def process_vacancy_statistics_hh(programm_languages):
     programming_language_statistics = {}
     hh_vacancies = fetch_all_vacancies_hh(programm_languages)
     for (
-        programm_language_vacancies, 
+        programm_language_vacancies,
         all_vacancies_program_language
     ) in hh_vacancies.items():
         vacancies_found = len(all_vacancies_program_language)

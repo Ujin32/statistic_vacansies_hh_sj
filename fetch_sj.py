@@ -27,9 +27,12 @@ def fetch_all_vacancies_sj(app_id, programm_languages):
                 "count": 20,
                 "page": page
             }
-            sj_response = requests.get(url, headers=headers, params=params)
-            sj_response.raise_for_status
-            vacancies_info = sj_response.json()
+            try:
+                sj_response = requests.get(url, headers=headers, params=params)
+                sj_response.raise_for_status
+                vacancies_info = sj_response.json()
+            except requests.exceptions.RequestException as error:
+                print("Произошла ошибка при выполнении запроса:", str(error))
             if vacancies_info["total"] == len(programm_language_pages):
                 break
             vacancies_page = vacancies_info["objects"]

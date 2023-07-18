@@ -16,9 +16,16 @@ def main():
         return
     title_hh = "HeadHunter Moscow"
     title_sj = "SuperJob Moscow"
-    convert_to_table(title_hh,  programming_language_statistics)
-    programming_language_statistics = process_vacancy_statistics_sj(app_id, default_languages)
-    convert_to_table(title_sj,  programming_language_statistics)
+    programming_language_statistics_hh = process_vacancy_statistics_hh(
+        app_id,
+        default_languages
+    )
+    convert_to_table(title_hh,  programming_language_statistics_hh)
+    programming_language_statistics_sj = process_vacancy_statistics_sj(
+        app_id,
+        default_languages
+    )
+    convert_to_table(title_sj,  programming_language_statistics_sj)
 
 
 if __name__ == '__main__':

@@ -4,8 +4,6 @@ from terminaltables import AsciiTable
 def predict_salary(salary_from, salary_to):
     if not salary_from and not salary_to:
         return None
-    if salary_from == 0 and salary_to == 0:
-        return None
     elif salary_from and salary_to:
         final_salary = (salary_to + salary_from)/2
         return final_salary

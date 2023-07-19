@@ -9,11 +9,11 @@ from functions_predict_salary import convert_to_table, predict_salary
 from languages import languages as default_languages
 
 
-def fetch_all_vacancies_sj(app_id, programm_languages):
+def fetch_all_vacancies_sj(sj_app_id, programm_languages):
     url = "https://api.superjob.ru/2.0/vacancies/"
     sj_vacancies = {}
     headers = {
-        "X-Api-App-Id": app_id
+        "X-Api-App-Id": sj_app_id
     }
     for programm_language in programm_languages:
         programm_language_pages = []
@@ -67,9 +67,9 @@ def calculate_average_salary_sj(vacancies):
     return processed_vacancies_count, average_salary
 
 
-def process_vacancy_statistics_sj(app_id, programm_languages):
+def process_vacancy_statistics_sj(sj_app_id, programm_languages):
     programming_language_statistics = {}
-    sj_vacancies = fetch_all_vacancies_sj(app_id, programm_languages)
+    sj_vacancies = fetch_all_vacancies_sj(sj_app_id, programm_languages)
     for (
         programm_language_vacancies,
         all_vacancies_program_language
@@ -102,12 +102,12 @@ def main():
     programming_languages = args.program_language
     title = "SuperJob Moscow"
     load_dotenv()
-    app_id = os.environ['APP_ID']
-    if not app_id:
+    sj_app_id = os.environ['SJ_APP_ID']
+    if not sj_app_id:
         print("Отсутствует авторизация на SuperJob")
         return
     programming_language_statistics = process_vacancy_statistics_sj(
-        app_id,
+        sj_app_id,
         programming_languages
     )
 

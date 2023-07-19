@@ -17,7 +17,6 @@ def main():
     title_hh = "HeadHunter Moscow"
     title_sj = "SuperJob Moscow"
     programming_language_statistics_hh = process_vacancy_statistics_hh(
-        app_id,
         default_languages
     )
     convert_to_table(title_hh,  programming_language_statistics_hh)

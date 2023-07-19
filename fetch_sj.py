@@ -15,7 +15,7 @@ def fetch_all_vacancies_sj(app_id, programm_languages):
     headers = {
         "X-Api-App-Id": app_id
     }
-    for _, programm_language in enumerate(programm_languages):
+    for programm_language in programm_languages:
         programm_language_pages = []
         for page in count(0):
             params = {
@@ -42,7 +42,7 @@ def fetch_all_vacancies_sj(app_id, programm_languages):
 
 
 def predict_rub_salary_for_sj(vacancy):
-    if vacancy is None or vacancy['currency'] != 'rub':
+    if not vacancy or vacancy['currency'] != 'rub':
         return None
     salary_from = vacancy["payment_from"]
     salary_to = vacancy["payment_to"]
@@ -55,9 +55,9 @@ def calculate_average_salary_sj(vacancies):
         return 0, 0
     sum_predict_salary = 0
     processed_vacancies_count = 0
-    for _, vacancy in enumerate(vacancies):
+    for vacancy in vacancies:
         salary_predict_vacancy = predict_rub_salary_for_sj(vacancy)
-        if salary_predict_vacancy is None:
+        if not salary_predict_vacancy:
             if len(vacancies) == 1:
                 return 0, 0
             continue
@@ -103,15 +103,20 @@ def main():
     title = "SuperJob Moscow"
     load_dotenv()
     app_id = os.environ['APP_ID']
-    if app_id is None:
+    if not app_id:
         print("Отсутствует авторизация на SuperJob")
         return
     programming_language_statistics = process_vacancy_statistics_sj(
         app_id,
         programming_languages
     )
-    convert_to_table(title, programming_language_statistics)
 
-    
+    sj_vacansies_table = convert_to_table(
+        title,
+        programming_language_statistics
+    )
+    print(sj_vacansies_table)
+
+
 if __name__ == '__main__':
     main()

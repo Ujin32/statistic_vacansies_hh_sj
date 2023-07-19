@@ -8,7 +8,7 @@ from languages import languages as default_languages
 
 
 def predict_rub_salary_for_hh(vacancy):
-    if vacancy is None or vacancy['currency'] != 'RUR':
+    if not vacancy or vacancy['currency'] != 'RUR':
         return None
     salary_from = vacancy["from"]
     salary_to = vacancy["to"]
@@ -21,10 +21,10 @@ def calculate_average_salary_hh(vacancies):
         return 0, 0
     sum_predict_salary = 0
     processed_vacancies_count = 0
-    for _, vacancy in enumerate(vacancies):
+    for vacancy in vacancies:
         vacancy_salary = vacancy["salary"]
         salary_predict_vacancy = predict_rub_salary_for_hh(vacancy_salary)
-        if salary_predict_vacancy is None:
+        if not salary_predict_vacancy:
             if len(vacancies) == 1:
                 return 0, 0
             continue
@@ -37,7 +37,7 @@ def calculate_average_salary_hh(vacancies):
 def fetch_all_vacancies_hh(programm_languages):
     url = "https://api.hh.ru/vacancies"
     hh_vacansies = {}
-    for _, programm_language in enumerate(programm_languages):
+    for programm_language in programm_languages:
         pages_data_language = []
         for page in count(0):
             params = {
@@ -72,7 +72,7 @@ def process_vacancy_statistics_hh(programm_languages):
         vacancies_found = len(all_vacancies_program_language)
         vacancies_processed, average_salary = calculate_average_salary_hh(
             all_vacancies_program_language
-            )
+        )
         programming_language_statistics[programm_language_vacancies] = {
             "vacancies_found": vacancies_found,
             "vacancies_processed": vacancies_processed,
@@ -98,8 +98,12 @@ def main():
     title = "HeadHunter Moscow"
     programming_language_statistics = process_vacancy_statistics_hh(
         programming_languages
-        )
-    convert_to_table(title,  programming_language_statistics)
+    )
+    hh_vacansies_table = convert_to_table(
+        title,
+        programming_language_statistics
+    )
+    print(hh_vacansies_table)
 
 
 if __name__ == '__main__':

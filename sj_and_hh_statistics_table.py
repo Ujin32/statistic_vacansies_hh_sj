@@ -11,7 +11,7 @@ from languages import languages as default_languages
 def main():
     load_dotenv()
     app_id = os.environ['APP_ID']
-    if app_id is None:
+    if not app_id:
         print("APP_ID в .env не задан")
         return
     title_hh = "HeadHunter Moscow"
@@ -19,12 +19,19 @@ def main():
     programming_language_statistics_hh = process_vacancy_statistics_hh(
         default_languages
     )
-    convert_to_table(title_hh,  programming_language_statistics_hh)
+    hh_vacansies_table = convert_to_table(
+        title_hh,
+        programming_language_statistics_hh
+    )
     programming_language_statistics_sj = process_vacancy_statistics_sj(
         app_id,
         default_languages
     )
-    convert_to_table(title_sj,  programming_language_statistics_sj)
+    sj_vacansies_table = convert_to_table(
+        title_sj,
+        programming_language_statistics_sj
+    )
+    print(hh_vacansies_table, sj_vacansies_table)
 
 
 if __name__ == '__main__':

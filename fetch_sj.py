@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 
 from functions_predict_salary import convert_to_table, predict_salary
 from languages import languages as default_languages
+from search_settings import SJSearchSettings
 
 
-def fetch_vacancies_sj(sj_app_id, programming_languages):
+def fetch_vacancies_sj(sj_app_id, programming_languages, search_settings):
     url = "https://api.superjob.ru/2.0/vacancies/"
     sj_vacancies = {}
     headers = {
@@ -19,12 +20,12 @@ def fetch_vacancies_sj(sj_app_id, programming_languages):
         found_vacancies = []
         for page in count(0):
             params = {
-                "town": 4,
-                "catalogues": 48,
+                "town": search_settings.search_town,
+                "catalogues": search_settings.search_catalogues,
                 "keywords[0][keys]": f"{programming_language}",
-                "keywords[0][srws]": 1,
-                "keywords[0][skwc]": "particular",
-                "count": 20,
+                "keywords[0][srws]": search_settings.search_block,
+                "keywords[0][skwc]": search_settings.search_method,
+                "count": search_settings.per_page_result_count,
                 "page": page
             }
             try:
@@ -67,9 +68,17 @@ def calculate_average_salary_sj(vacancies):
     return processed_vacancies_count, average_salary
 
 
-def process_vacancy_statistics_sj(sj_app_id, programming_languages):
+def process_vacancy_statistics_sj(
+        sj_app_id,
+        programming_languages,
+        search_settings
+):
     programming_language_statistics = {}
-    sj_vacancies = fetch_vacancies_sj(sj_app_id, programming_languages)
+    sj_vacancies = fetch_vacancies_sj(
+        sj_app_id,
+        programming_languages,
+        search_settings
+    )
     for (
         programming_language_vacancy,
         found_vacancies
@@ -106,17 +115,25 @@ def main():
     if not sj_app_id:
         print("Отсутствует авторизация на SuperJob")
         return
+    search_settings = SJSearchSettings(
+        search_town=4,
+        search_catalogues=48,
+        search_block=1,
+        search_method="particular",
+        per_page_result_count=20
 
+    )
     programming_language_statistics = process_vacancy_statistics_sj(
         sj_app_id,
-        programming_languages
+        programming_languages,
+        search_settings
     )
 
     sj_vacansies_table = convert_to_table(
         sj_table_title,
         programming_language_statistics
     )
-    print(sj_vacansies_table)
+    print(sj_vacansies_table.table)
 
 
 if __name__ == '__main__':

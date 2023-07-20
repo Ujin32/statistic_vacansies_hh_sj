@@ -5,6 +5,7 @@ import requests
 
 from functions_predict_salary import convert_to_table, predict_salary
 from languages import languages as default_languages
+from search_settings import HHSearchSettings
 
 
 def predict_rub_salary_for_hh(vacancy):
@@ -34,19 +35,19 @@ def calculate_average_salary_hh(vacancies):
     return processed_vacancies_count, average_salary
 
 
-def fetch_vacancies_hh(programming_languages):
+def fetch_vacancies_hh(programming_languages, search_settings):
     url = "https://api.hh.ru/vacancies"
     hh_vacansies = {}
     for programming_language in programming_languages:
         found_vacancies = []
         for page in count(0):
             params = {
-                "area": 1,
+                "area": search_settings.search_area,
                 "text": f"{programming_language}",
-                "search_field": "name",
-                "period": 30,
+                "search_field": search_settings.search_field,
+                "period": search_settings.search_period,
                 "page": page,
-                "per_page": 100,
+                "per_page": search_settings.per_page_result_count,
                 }
             try:
                 hh_response = requests.get(url, params=params)
@@ -62,9 +63,9 @@ def fetch_vacancies_hh(programming_languages):
     return hh_vacansies
 
 
-def process_vacancy_statistics_hh(programming_languages):
+def process_vacancy_statistics_hh(programming_languages, search_settings):
     programming_language_statistics = {}
-    hh_vacancies = fetch_vacancies_hh(programming_languages)
+    hh_vacancies = fetch_vacancies_hh(programming_languages, search_settings)
     for (
         programming_language_vacancy,
         found_vacancies
@@ -96,15 +97,21 @@ def main():
     args = parser.parse_args()
     programming_languages = args.programming_languages
     hh_table_title = "HeadHunter Moscow"
-
+    search_settings = HHSearchSettings(
+        search_area=1,
+        search_field="name",
+        search_period=30,
+        per_page_result_count=100
+    )
     programming_language_statistics = process_vacancy_statistics_hh(
-        programming_languages
+        programming_languages,
+        search_settings
     )
     hh_vacansies_table = convert_to_table(
         hh_table_title,
         programming_language_statistics
     )
-    print(hh_vacansies_table)
+    print(hh_vacansies_table.table)
 
 
 if __name__ == '__main__':

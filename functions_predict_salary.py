@@ -15,21 +15,21 @@ def predict_salary(salary_from, salary_to):
         return final_salary
 
 
-def convert_to_table(title, statistic_vacansies):
+def convert_to_table(title, statistics_vacansies):
     table_data = [[
         'Язык программирования',
         'Вакансий найдено',
         'Вакансий обработано',
         'Средняя зарплата'
     ]]
-    for key, dict_values in statistic_vacansies.items():
-        list_vacans = [
-            key,
-            dict_values['vacancies_found'],
-            dict_values['vacancies_processed'],
-            dict_values['average_salary']
+    for programm_language, statistics in statistics_vacansies.items():
+        programming_language_statistics = [
+            programm_language,
+            statistics['vacancies_found'],
+            statistics['vacancies_processed'],
+            statistics['average_salary']
         ]
-        table_data.append(list_vacans)
+        table_data.append(programming_language_statistics)
 
     table = AsciiTable(table_data, title)
     return table

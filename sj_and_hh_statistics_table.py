@@ -14,22 +14,22 @@ def main():
     if not sj_app_id:
         print("APP_ID в .env не задан")
         return
-    title_hh = "HeadHunter Moscow"
-    title_sj = "SuperJob Moscow"
-    programming_language_statistics_hh = process_vacancy_statistics_hh(
+    hh_table_title = "HeadHunter Moscow"
+    sj_table_title = "SuperJob Moscow"
+    hh_programming_language_statistics = process_vacancy_statistics_hh(
         default_languages
     )
     hh_vacansies_table = convert_to_table(
-        title_hh,
-        programming_language_statistics_hh
+        hh_table_title,
+        hh_programming_language_statistics
     )
-    programming_language_statistics_sj = process_vacancy_statistics_sj(
+    sj_programming_language_statistics = process_vacancy_statistics_sj(
         sj_app_id,
         default_languages
     )
     sj_vacansies_table = convert_to_table(
-        title_sj,
-        programming_language_statistics_sj
+        sj_table_title,
+        sj_programming_language_statistics
     )
     print(hh_vacansies_table, sj_vacansies_table)
 

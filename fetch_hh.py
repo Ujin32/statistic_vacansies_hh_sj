@@ -12,37 +12,37 @@ def predict_rub_salary_for_hh(vacancy):
         return None
     salary_from = vacancy["from"]
     salary_to = vacancy["to"]
-    salary_predict_vacancy = predict_salary(salary_from, salary_to)
-    return salary_predict_vacancy
+    vacancy_salary_predict = predict_salary(salary_from, salary_to)
+    return vacancy_salary_predict
 
 
 def calculate_average_salary_hh(vacancies):
     if not vacancies:
         return 0, 0
-    sum_predict_salary = 0
+    salary_predict_sum = 0
     processed_vacancies_count = 0
     for vacancy in vacancies:
         vacancy_salary = vacancy["salary"]
-        salary_predict_vacancy = predict_rub_salary_for_hh(vacancy_salary)
-        if not salary_predict_vacancy:
+        vacancy_salary_predict = predict_rub_salary_for_hh(vacancy_salary)
+        if not vacancy_salary_predict:
             if len(vacancies) == 1:
                 return 0, 0
             continue
-        sum_predict_salary += salary_predict_vacancy
+        salary_predict_sum += vacancy_salary_predict
         processed_vacancies_count += 1
-    average_salary = int(sum_predict_salary / processed_vacancies_count)
+    average_salary = int(salary_predict_sum / processed_vacancies_count)
     return processed_vacancies_count, average_salary
 
 
-def fetch_all_vacancies_hh(programm_languages):
+def fetch_vacancies_hh(programming_languages):
     url = "https://api.hh.ru/vacancies"
     hh_vacansies = {}
-    for programm_language in programm_languages:
-        pages_data_language = []
+    for programming_language in programming_languages:
+        found_vacancies = []
         for page in count(0):
             params = {
                 "area": 1,
-                "text": f"{programm_language }",
+                "text": f"{programming_language}",
                 "search_field": "name",
                 "period": 30,
                 "page": page,
@@ -51,29 +51,29 @@ def fetch_all_vacancies_hh(programm_languages):
             try:
                 hh_response = requests.get(url, params=params)
                 hh_response.raise_for_status
-                vacancies_info = hh_response.json()
+                received_vacancies = hh_response.json()
             except requests.exceptions.RequestException as error:
                 print("Произошла ошибка при выполнении запроса:", error)
-            if page == vacancies_info['pages']:
+            if page == received_vacancies['pages']:
                 break
-            vacancies_page = vacancies_info["items"]
-            pages_data_language.extend(vacancies_page)
-            hh_vacansies[programm_language] = pages_data_language
+            vacancies = received_vacancies["items"]
+            found_vacancies.extend(vacancies)
+            hh_vacansies[programming_language] = found_vacancies
     return hh_vacansies
 
 
-def process_vacancy_statistics_hh(programm_languages):
+def process_vacancy_statistics_hh(programming_languages):
     programming_language_statistics = {}
-    hh_vacancies = fetch_all_vacancies_hh(programm_languages)
+    hh_vacancies = fetch_vacancies_hh(programming_languages)
     for (
-        programm_language_vacancies,
-        all_vacancies_program_language
+        programming_language_vacancy,
+        found_vacancies
     ) in hh_vacancies.items():
-        vacancies_found = len(all_vacancies_program_language)
+        vacancies_found = len(found_vacancies)
         vacancies_processed, average_salary = calculate_average_salary_hh(
-            all_vacancies_program_language
+            found_vacancies
         )
-        programming_language_statistics[programm_language_vacancies] = {
+        programming_language_statistics[programming_language_vacancy] = {
             "vacancies_found": vacancies_found,
             "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
@@ -88,19 +88,20 @@ def main():
     )
     parser.add_argument(
         '-pl',
-        '--program_language',
+        '--programming_languages',
         nargs='+',
         default=default_languages,
         help='Язык программрования который быдет указан в названии вакансии'
     )
     args = parser.parse_args()
-    programming_languages = args.program_language
-    title = "HeadHunter Moscow"
+    programming_languages = args.programming_languages
+    hh_table_title = "HeadHunter Moscow"
+
     programming_language_statistics = process_vacancy_statistics_hh(
         programming_languages
     )
     hh_vacansies_table = convert_to_table(
-        title,
+        hh_table_title,
         programming_language_statistics
     )
     print(hh_vacansies_table)

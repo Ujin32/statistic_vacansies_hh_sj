@@ -63,11 +63,11 @@ def calculate_average_salary_sj(vacancies):
     for vacancy in vacancies:
         vacancy_salary_predict = predict_rub_salary_for_sj(vacancy)
         if not vacancy_salary_predict:
-            if len(vacancies) == 1:
-                return 0, 0
             continue
         salary_predict_sum += vacancy_salary_predict
         processed_vacancies_count += 1
+    if not processed_vacancies_count:
+        return 0, 0
     average_salary = int(salary_predict_sum / processed_vacancies_count)
     return processed_vacancies_count, average_salary
 

@@ -5,11 +5,21 @@ from dotenv import load_dotenv
 from fetch_hh import process_vacancy_statistics_hh
 from fetch_sj import process_vacancy_statistics_sj
 from functions_predict_salary import convert_to_table
-from languages import languages as default_languages
 import search_settings
 
 
 def main():
+    default_languages = [
+        "Python",
+        "Golang",
+        "Java",
+        "JavaScript",
+        "C",
+        "Scala",
+        "C++",
+        "C#",
+        "SQL",
+    ]
     load_dotenv()
     sj_app_id = os.environ['SJ_APP_ID']
     if not sj_app_id:

@@ -6,7 +6,6 @@ import requests
 from dotenv import load_dotenv
 
 from functions_predict_salary import convert_to_table, predict_salary
-from languages import languages as default_languages
 from search_settings import SJSearchSettings
 
 
@@ -96,6 +95,17 @@ def process_vacancy_statistics_sj(
 
 
 def main():
+    default_languages = [
+        "Python",
+        "Golang",
+        "Java",
+        "JavaScript",
+        "C",
+        "Scala",
+        "C++",
+        "C#",
+        "SQL",
+    ]
     parser = argparse.ArgumentParser(
         description='Программа собирает статистику по вакансиям c superjob.ru'
     )

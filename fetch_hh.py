@@ -4,7 +4,6 @@ from itertools import count
 import requests
 
 from functions_predict_salary import convert_to_table, predict_salary
-from languages import languages as default_languages
 from search_settings import HHSearchSettings
 
 
@@ -86,6 +85,18 @@ def process_vacancy_statistics_hh(programming_languages, search_settings):
 
 
 def main():
+    default_languages = [
+        "Python",
+        "Golang",
+        "Java",
+        "JavaScript",
+        "C",
+        "Scala",
+        "C++",
+        "C#",
+        "SQL",
+    ]
+
     parser = argparse.ArgumentParser(
         description='Программа собирает статистику по вакансиям '
                     'с headhunter.ru'

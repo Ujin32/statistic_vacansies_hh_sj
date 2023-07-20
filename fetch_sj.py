@@ -18,6 +18,7 @@ def fetch_vacancies_sj(sj_app_id, programming_languages, search_settings):
     }
     for programming_language in programming_languages:
         found_vacancies = []
+        programming_lang_vacancies = {}
         for page in count(0):
             params = {
                 "town": search_settings.search_town,
@@ -32,13 +33,16 @@ def fetch_vacancies_sj(sj_app_id, programming_languages, search_settings):
                 sj_response = requests.get(url, headers=headers, params=params)
                 sj_response.raise_for_status
                 received_vacancies = sj_response.json()
+                total_found = received_vacancies["total"]
             except requests.exceptions.RequestException as error:
                 print("Произошла ошибка при выполнении запроса:", str(error))
-            if received_vacancies["total"] == len(found_vacancies):
-                break
             vacancies = received_vacancies["objects"]
             found_vacancies.extend(vacancies)
-            sj_vacancies[programming_language] = found_vacancies
+            programming_lang_vacancies["vacanсies"] = found_vacancies
+            programming_lang_vacancies["total"] = total_found
+            sj_vacancies[programming_language] = programming_lang_vacancies
+            if not received_vacancies["more"]:
+                break
     return sj_vacancies
 
 
@@ -79,16 +83,12 @@ def process_vacancy_statistics_sj(
         programming_languages,
         search_settings
     )
-    for (
-        programming_language_vacancy,
-        found_vacancies
-    ) in sj_vacancies.items():
-        vacancies_found = len(found_vacancies)
+    for programming_language, found_vacancies in sj_vacancies.items():
         vacancies_processed, average_salary = calculate_average_salary_sj(
-            found_vacancies
+            found_vacancies["vacanсies"]
         )
-        programming_language_statistics[programming_language_vacancy] = {
-            "vacancies_found": vacancies_found,
+        programming_language_statistics[programming_language] = {
+            "vacancies_found": found_vacancies["total"],
             "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
         }

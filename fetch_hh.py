@@ -39,6 +39,7 @@ def fetch_vacancies_hh(programming_languages, search_settings):
     url = "https://api.hh.ru/vacancies"
     hh_vacansies = {}
     for programming_language in programming_languages:
+        programming_lang_vacancies = {}
         found_vacancies = []
         for page in count(0):
             params = {
@@ -53,29 +54,31 @@ def fetch_vacancies_hh(programming_languages, search_settings):
                 hh_response = requests.get(url, params=params)
                 hh_response.raise_for_status
                 received_vacancies = hh_response.json()
+                total_found = received_vacancies["found"]
             except requests.exceptions.RequestException as error:
                 print("Произошла ошибка при выполнении запроса:", error)
             if page == received_vacancies['pages']:
                 break
             vacancies = received_vacancies["items"]
             found_vacancies.extend(vacancies)
-            hh_vacansies[programming_language] = found_vacancies
+            programming_lang_vacancies["vacanсies"] = found_vacancies
+            programming_lang_vacancies["total"] = total_found
+        hh_vacansies[programming_language] = programming_lang_vacancies
     return hh_vacansies
 
 
 def process_vacancy_statistics_hh(programming_languages, search_settings):
     programming_language_statistics = {}
-    hh_vacancies = fetch_vacancies_hh(programming_languages, search_settings)
-    for (
-        programming_language_vacancy,
-        found_vacancies
-    ) in hh_vacancies.items():
-        vacancies_found = len(found_vacancies)
+    hh_vacancies = fetch_vacancies_hh(
+        programming_languages,
+        search_settings
+    )
+    for programming_language, found_vacancies in hh_vacancies.items():
         vacancies_processed, average_salary = calculate_average_salary_hh(
-            found_vacancies
+            found_vacancies["vacanсies"]
         )
-        programming_language_statistics[programming_language_vacancy] = {
-            "vacancies_found": vacancies_found,
+        programming_language_statistics[programming_language] = {
+            "vacancies_found": hh_vacancies[programming_language]["total"],
             "vacancies_processed": vacancies_processed,
             "average_salary": average_salary
         }

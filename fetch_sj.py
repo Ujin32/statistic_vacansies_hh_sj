@@ -17,7 +17,6 @@ def fetch_vacancies_sj(sj_app_id, programming_languages, search_settings):
     }
     for programming_language in programming_languages:
         found_vacancies = []
-        programming_lang_vacancies = {}
         for page in count(0):
             params = {
                 "town": search_settings.search_town,
@@ -37,8 +36,10 @@ def fetch_vacancies_sj(sj_app_id, programming_languages, search_settings):
                 print("Произошла ошибка при выполнении запроса:", str(error))
             vacancies = received_vacancies["objects"]
             found_vacancies.extend(vacancies)
-            programming_lang_vacancies["vacanсies"] = found_vacancies
-            programming_lang_vacancies["total"] = total_found
+            programming_lang_vacancies = {
+                "vacanсies": found_vacancies,
+                "total": total_found
+            }
             sj_vacancies[programming_language] = programming_lang_vacancies
             if not received_vacancies["more"]:
                 break

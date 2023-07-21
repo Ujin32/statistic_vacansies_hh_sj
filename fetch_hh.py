@@ -38,7 +38,6 @@ def fetch_vacancies_hh(programming_languages, search_settings):
     url = "https://api.hh.ru/vacancies"
     hh_vacansies = {}
     for programming_language in programming_languages:
-        programming_lang_vacancies = {}
         found_vacancies = []
         for page in count(0):
             params = {
@@ -60,8 +59,10 @@ def fetch_vacancies_hh(programming_languages, search_settings):
                 break
             vacancies = received_vacancies["items"]
             found_vacancies.extend(vacancies)
-            programming_lang_vacancies["vacanсies"] = found_vacancies
-            programming_lang_vacancies["total"] = total_found
+        programming_lang_vacancies = {
+            "vacanсies": found_vacancies,
+            "total": total_found
+        }
         hh_vacansies[programming_language] = programming_lang_vacancies
     return hh_vacansies
 

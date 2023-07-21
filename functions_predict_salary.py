@@ -16,7 +16,7 @@ def predict_salary(salary_from, salary_to):
 
 
 def convert_to_table(title, statistics_vacansies):
-    table_data = [[
+    table_data_rows = [[
         'Язык программирования',
         'Вакансий найдено',
         'Вакансий обработано',
@@ -29,7 +29,7 @@ def convert_to_table(title, statistics_vacansies):
             statistics['vacancies_processed'],
             statistics['average_salary']
         ]
-        table_data.append(programming_language_statistics)
+        table_data_rows.append(programming_language_statistics)
 
-    table = AsciiTable(table_data, title)
+    table = AsciiTable(table_data_rows, title)
     return table

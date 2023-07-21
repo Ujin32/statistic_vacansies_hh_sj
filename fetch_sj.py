@@ -51,24 +51,24 @@ def predict_rub_salary_for_sj(vacancy):
         return None
     salary_from = vacancy["payment_from"]
     salary_to = vacancy["payment_to"]
-    salary_predict_vacancy = predict_salary(salary_from, salary_to)
-    return salary_predict_vacancy
+    vacancy_salary_prediction = predict_salary(salary_from, salary_to)
+    return vacancy_salary_prediction
 
 
 def calculate_average_salary_sj(vacancies):
     if not vacancies:
         return 0, 0
-    salary_predict_sum = 0
+    salary_prediction_sum = 0
     processed_vacancies_count = 0
     for vacancy in vacancies:
-        vacancy_salary_predict = predict_rub_salary_for_sj(vacancy)
-        if not vacancy_salary_predict:
+        vacancy_salary_prediction = predict_rub_salary_for_sj(vacancy)
+        if not vacancy_salary_prediction:
             continue
-        salary_predict_sum += vacancy_salary_predict
+        salary_prediction_sum += vacancy_salary_prediction
         processed_vacancies_count += 1
     if not processed_vacancies_count:
         return 0, 0
-    average_salary = int(salary_predict_sum / processed_vacancies_count)
+    average_salary = int(salary_prediction_sum / processed_vacancies_count)
     return processed_vacancies_count, average_salary
 
 
